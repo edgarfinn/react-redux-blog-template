@@ -3,11 +3,27 @@ import {Field, reduxForm } from 'redux-form';
 
 
 class PostsNew extends Component {
-  render () {
+
+  renderTitleField(field) {
     return (
       <div>
-        PostsNews!
+        <input
+          type="text"
+          {...field.input}
+         />
       </div>
+    )
+  }
+
+  render () {
+    return (
+      <form>
+        <Field
+          // describes which bit of state is being edited
+          name="title"
+          component={this.renderTitleField}
+        />
+      </form>
     )
   }
 }
