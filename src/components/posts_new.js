@@ -4,10 +4,12 @@ import {Field, reduxForm } from 'redux-form';
 
 class PostsNew extends Component {
 
-  renderTitleField(field) {
+  renderField(field) {
     return (
-      <div>
+      <div className="form-group">
+        <label>Title</label>
         <input
+          className="form-control"
           type="text"
           {...field.input}
          />
@@ -21,7 +23,13 @@ class PostsNew extends Component {
         <Field
           // describes which bit of state is being edited
           name="title"
-          component={this.renderTitleField}
+          component={this.renderField}
+        />
+
+        <Field
+          // describes which bit of state is being edited
+          name="tags"
+          component={this.renderField}
         />
       </form>
     )
@@ -30,6 +38,6 @@ class PostsNew extends Component {
 
 
 export default reduxForm({
-  // always make sure the value of form here unique, to prevent conflict with any other forms on your application.
+  // always make sure the value of form here is unique, to prevent conflict with any other forms on your application.
   form: 'PostsNewForm'
 })(PostsNew);
