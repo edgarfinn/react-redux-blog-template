@@ -1,45 +1,66 @@
 import React, {Component} from 'react';
 import {Field, reduxForm } from 'redux-form';
+import {Link} from 'react-router-dom';
+import { connect } from 'react-redux';
+import { createPost } from '../actions';
+
 
 
 class PostsNew extends Component {
 
   renderField(field) {
+    const { meta: {touched, error} } = field;
+    const className = `form-group ${touched && error ? 'has-danger' : ''}`;
     return (
-      <div className="form-group">
+      <div className={className}>
         <label>{field.label}</label>
         <input
           className="form-control"
           type="text"
           {...field.input}
          />
+         {touched ? error : ''}
       </div>
     )
   }
 
+  onSubmit(values) {
+    // this === PostsNew component
+
+    this.props.createPost(values, () => {
+      this.props.history.push('/');
+    })
+  }
+
   render () {
+    const { handleSubmit } = this.props;
+    // same as: const handleSubmit = this.props.handleSubmit;
+
     return (
-      <form>
+      <form onSubmit={handleSubmit(this.onSubmit.bind(this))}>
         <Field
-          // describes which bit of state is being edited
           label="Title"
+          // describes which bit of state is being edited
           name="title"
           component={this.renderField}
         />
 
         <Field
-          // describes which bit of state is being edited
           label="Categories"
+          // describes which bit of state is being edited
           name="categories"
           component={this.renderField}
         />
 
         <Field
-          // describes which bit of state is being edited
           label="Post Content"
+          // describes which bit of state is being edited
           name="content"
           component={this.renderField}
         />
+        <button type="submit" className="btn btn-primary">Submit</button>
+        <Link to="/" className="btn btn-primary btn-danger">Cancel</Link>
+
       </form>
     )
   }
@@ -51,18 +72,29 @@ const validate = (values) =>  {
   // Validate the inputs from 'values'
   // if user did not enter a title value:
   if (!values.title) {
-    // then add
+    // then add this error message
     errors.title = "Enter a title!";
+  }
+  // if user enters a title shorter than 10 characters
+  // then add a different error message
+  if (values.content && values.content.length < 10) {
+    errors.content = 'Content must be longer than 10 characters!';
+  }
+
+  if (!values.categories) {
+    errors.categories = "Enter some categories!";
+  }
+  if (!values.content) {
+    errors.content = "Enter some content!";
   }
 
   // If errors object is empty, the form is fine to submit.
   // If errors has any properties, redux assumes the form is invalid.
   return errors;
-
 }
 
 export default reduxForm({
   // always make sure the value of form here is unique, to prevent conflict with any other forms on your application.
   validate,
   form: 'PostsNewForm'
-})(PostsNew);
+})(connect(null, { createPost })(PostsNew));
